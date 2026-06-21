@@ -668,6 +668,7 @@
       if (!this.isConnected) return;
       const user = this.user;
       if (!user) {
+        this._data = null; // drop any stale stats so later re-renders stay in the error state
         this._error("invalid");
         return;
       }

@@ -103,6 +103,22 @@ test("dispatches eyewire:error with kind on failure", async () => {
   assert.equal(ev.detail.kind, "not_found");
 });
 
+test("emptying user clears cached data so presentation-only changes stay in error", async () => {
+  fetchImpl = async () => ({ ok: true, status: 200, json: async () => sample });
+  const el = mount({ user: "crazyman4865" });
+  await tick();
+  assert.match(el.shadowView.innerHTML, /4,579,373/); // loaded the previous user
+
+  el.setAttribute("user", "");        // user emptied -> invalid
+  await tick();
+  assert.match(el.shadowView.innerHTML, /Invalid username/);
+
+  el.setAttribute("mode", "mini");    // presentation-only change must NOT resurrect old stats
+  await tick();
+  assert.doesNotMatch(el.shadowView.innerHTML, /4,579,373/);
+  assert.match(el.shadowView.innerHTML, /Invalid username/);
+});
+
 test("changing user attribute refetches", async () => {
   const seen = [];
   fetchImpl = async (url) => { seen.push(url); return { ok: true, status: 200, json: async () => sample }; };
