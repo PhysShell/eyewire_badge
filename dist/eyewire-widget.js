@@ -668,6 +668,12 @@
       if (!this.isConnected) return;
       const user = this.user;
       if (!user) {
+        // Invalidate any in-flight load: bump the token so a late response fails
+        // the stale-guard, and abort the request. Otherwise a fetch started for
+        // the previous user could resolve and render/emit for it after the user
+        // was cleared.
+        this._fetchToken++;
+        if (this._abort) this._abort.abort();
         this._data = null; // drop any stale stats so later re-renders stay in the error state
         this._error("invalid");
         return;

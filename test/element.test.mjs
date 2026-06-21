@@ -119,6 +119,30 @@ test("emptying user clears cached data so presentation-only changes stay in erro
   assert.match(el.shadowView.innerHTML, /Invalid username/);
 });
 
+test("emptying user while a fetch is in flight discards the stale response", async () => {
+  let resolveFirst;
+  const firstPending = new Promise((res) => { resolveFirst = res; });
+  let calls = 0;
+  fetchImpl = async () => {
+    calls += 1;
+    if (calls === 1) await firstPending;          // first load stays pending
+    return { ok: true, status: 200, json: async () => sample };
+  };
+
+  const el = mount({ user: "crazyman4865" });
+  await tick();                                    // first _load fires, fetch is pending
+  el.setAttribute("user", "");                     // clear user mid-flight
+  await tick();
+  assert.match(el.shadowView.innerHTML, /Invalid username/);
+
+  resolveFirst();                                  // stale response arrives late
+  await tick(); await tick();
+
+  assert.match(el.shadowView.innerHTML, /Invalid username/);
+  const loadEv = (el._events || []).find((e) => e.type === "eyewire:load");
+  assert.ok(!loadEv, "stale eyewire:load must not be emitted after user is cleared");
+});
+
 test("changing user attribute refetches", async () => {
   const seen = [];
   fetchImpl = async (url) => { seen.push(url); return { ok: true, status: 200, json: async () => sample }; };
