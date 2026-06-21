@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>EyeWire Stats Widget — demo</title>
+  <meta name="description" content="Embeddable EyeWire player-stats widget. Public API, no login, Shadow DOM." />
+  <link rel="stylesheet" href="./demo.css" />
+  <!-- The widget itself. One tag, defer, no module needed. -->
+  <script src="./eyewire-widget.js" defer></script>
+</head>
+<body>
+  <header class="hero">
+    <h1><span class="glow">EyeWire</span> Stats Widget</h1>
+    <p class="tagline">
+      A drop-in <code>&lt;eyewire-stats&gt;</code> Web Component for public EyeWire
+      player stats. Dark sci-fi HUD card, Shadow-DOM isolated, no login required.
+    </p>
+    <form id="lookup" autocomplete="off">
+      <label for="user">Username</label>
+      <input id="user" name="user" value="crazyman4865" spellcheck="false" />
+      <button type="submit">Show stats</button>
+    </form>
+  </header>
+
+  <main>
+    <section>
+      <h2>card <span class="muted">— full card, one per period</span></h2>
+      <div class="row" id="cards">
+        <figure>
+          <eyewire-stats user="crazyman4865" mode="card" period="day"></eyewire-stats>
+          <figcaption>period="day"</figcaption>
+        </figure>
+        <figure>
+          <eyewire-stats user="crazyman4865" mode="card" period="week"></eyewire-stats>
+          <figcaption>period="week"</figcaption>
+        </figure>
+        <figure>
+          <eyewire-stats user="crazyman4865" mode="card" period="forever"></eyewire-stats>
+          <figcaption>period="forever" (default)</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section>
+      <h2>mini &amp; badge <span class="muted">— compact inline variants</span></h2>
+      <div class="row" id="compacts">
+        <figure>
+          <eyewire-stats user="crazyman4865" mode="mini"></eyewire-stats>
+          <figcaption>mode="mini"</figcaption>
+        </figure>
+        <figure>
+          <eyewire-stats user="crazyman4865" mode="badge"></eyewire-stats>
+          <figcaption>mode="badge"</figcaption>
+        </figure>
+        <figure>
+          <eyewire-stats user="crazyman4865" mode="card" theme="light"></eyewire-stats>
+          <figcaption>theme="light"</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section>
+      <h2>states <span class="muted">— graceful loading / error handling</span></h2>
+      <div class="row">
+        <figure>
+          <eyewire-stats user="zzz_no_such_user_xyz_999" mode="card"></eyewire-stats>
+          <figcaption>unknown player → "Player not found"</figcaption>
+        </figure>
+        <figure>
+          <eyewire-stats user="bad name!" mode="card"></eyewire-stats>
+          <figcaption>bad input → "Invalid username"</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="usage">
+      <h2>Use it</h2>
+<pre><code>&lt;script src="https://USERNAME.github.io/REPO/eyewire-widget.js" defer&gt;&lt;/script&gt;
+
+&lt;eyewire-stats user="SomeEyeWireUser" mode="card" period="forever"&gt;&lt;/eyewire-stats&gt;</code></pre>
+      <p class="muted">
+        Stats come straight from the public EyeWire API
+        (<code>eyewire.org/1.0/player/{user}/stats</code>), which sends
+        <code>Access-Control-Allow-Origin:&nbsp;*</code> — so no proxy is needed.
+        See the <a href="https://github.com/PhysShell/eyewire_badge">README</a>
+        for attributes, the optional Cloudflare Worker proxy, and security notes.
+      </p>
+    </section>
+  </main>
+
+  <footer>
+    <p>Public data only · no auth, cookies or tokens · MIT licensed</p>
+  </footer>
+
+  <script>
+    // Tiny demo: rewrite every widget's user attribute from the lookup box.
+    document.getElementById("lookup").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const u = document.getElementById("user").value.trim();
+      if (!u) return;
+      document.querySelectorAll("#cards eyewire-stats, #compacts eyewire-stats")
+        .forEach((el) => el.setAttribute("user", u));
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+{
+  "_comment": "Real sample response captured from GET https://eyewire.org/1.0/player/{username}/stats (2026-06-21). The endpoint sends 'Access-Control-Allow-Origin: *', so direct browser fetch works without a proxy. NOTE: an unknown player returns HTTP 200 with \"id\": null (not a 404). Numeric values may arrive as strings ('forever' block) or numbers (day/week/month).",
+  "id": 56038,
+  "username": "crazyman4865",
+  "day":   { "points": 0, "cubes": 0, "trailblazes": 0, "scythes": 0, "complete": 0 },
+  "week":  { "points": 0, "cubes": 0, "trailblazes": 0, "scythes": 0, "complete": 0 },
+  "month": { "points": 0, "cubes": 0, "trailblazes": 0, "scythes": 0, "complete": 0 },
+  "forever": {
+    "trailblazes": "8597",
+    "scythes": 2567,
+    "points": "4579373",
+    "cubes": "31453",
+    "complete": "11689"
+  },
+  "fscore": [
+    { "tp": 1028125, "fp": 1146,  "fn": 39276, "count": 60, "fscore": 0.9807208757497596, "full_window": true },
+    { "tp": 1705891, "fp": 1567,  "fn": 5575,  "count": 60, "fscore": 0.9979110386776658, "full_window": true }
+  ]
+}

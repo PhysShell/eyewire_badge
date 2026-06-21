@@ -1,0 +1,36 @@
+{
+  "name": "eyewire-stats-widget",
+  "version": "0.1.0",
+  "description": "Embeddable Web Component that shows public EyeWire player stats. No login, no tokens, Shadow-DOM isolated.",
+  "type": "module",
+  "main": "dist/eyewire-widget.js",
+  "files": [
+    "src/",
+    "dist/",
+    "worker/",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "node --test test/*.test.mjs",
+    "prepublishOnly": "node build.mjs"
+  },
+  "keywords": [
+    "eyewire",
+    "web-component",
+    "custom-element",
+    "widget",
+    "stats",
+    "badge",
+    "shadow-dom"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/PhysShell/eyewire_badge.git"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
