@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>eyewire-stats — mini &amp; badge</title>
+  <script src="../dist/eyewire-widget.js" defer></script>
+  <style>
+    body { background:#0a0e1a; color:#e7eefc; font-family:system-ui,sans-serif; padding:40px; line-height:2; }
+    h1 { font-weight:600; }
+  </style>
+</head>
+<body>
+  <h1>Inline mini variant</h1>
+  <p>
+    Drop it in a sentence about
+    <eyewire-stats user="crazyman4865" mode="mini"></eyewire-stats>
+    and it flows with the text.
+  </p>
+
+  <h1>Badge variant</h1>
+  <p>
+    Profile pill: <eyewire-stats user="crazyman4865" mode="badge"></eyewire-stats>
+  </p>
+
+  <h1>Via a proxy (optional)</h1>
+  <p>
+    If you deploy the Cloudflare Worker, point the widget at it with
+    <code>api-base</code>:
+  </p>
+  <!-- <eyewire-stats user="crazyman4865" api-base="https://your-worker.workers.dev"></eyewire-stats> -->
+</body>
+</html>

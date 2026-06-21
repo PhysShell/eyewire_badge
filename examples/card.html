@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>eyewire-stats — card</title>
+  <script src="../dist/eyewire-widget.js" defer></script>
+  <style>
+    body { background:#0a0e1a; color:#e7eefc; font-family:system-ui,sans-serif; padding:40px; }
+    .grid { display:flex; flex-wrap:wrap; gap:24px; }
+    h1 { font-weight:600; }
+  </style>
+</head>
+<body>
+  <h1>Card mode — every period</h1>
+  <div class="grid">
+    <eyewire-stats user="crazyman4865" mode="card" period="day"></eyewire-stats>
+    <eyewire-stats user="crazyman4865" mode="card" period="week"></eyewire-stats>
+    <eyewire-stats user="crazyman4865" mode="card" period="month"></eyewire-stats>
+    <eyewire-stats user="crazyman4865" mode="card" period="forever"></eyewire-stats>
+  </div>
+
+  <h1 style="margin-top:40px">Compact + light theme</h1>
+  <div class="grid">
+    <eyewire-stats user="crazyman4865" mode="card" compact="true"></eyewire-stats>
+    <eyewire-stats user="crazyman4865" mode="card" theme="light"></eyewire-stats>
+    <eyewire-stats user="crazyman4865" mode="card" show-updated="false"></eyewire-stats>
+  </div>
+</body>
+</html>
