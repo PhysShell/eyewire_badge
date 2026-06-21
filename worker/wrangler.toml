@@ -6,3 +6,4 @@ compatibility_date = "2024-11-01"
 
 # After deploy you'll get a URL like https://eyewire-stats-proxy.<you>.workers.dev
 # Point the widget at it:  <eyewire-stats user="X" api-base="https://...workers.dev">
+# README badge:            ![EyeWire](https://...workers.dev/badge.svg?u=X)

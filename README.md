@@ -173,6 +173,49 @@ the widget handles direct and proxied responses identically.
 
 ---
 
+## SVG badge for GitHub READMEs
+
+GitHub strips `<script>` from rendered Markdown, so the JS widget **cannot run in
+a README**. For that case the Worker also exposes a static SVG badge:
+
+```
+GET /badge.svg?u=<username>
+```
+
+Embed it as a normal image:
+
+```markdown
+![EyeWire stats](https://your-worker.example/badge.svg?u=SomeUser)
+```
+
+Renders a shields‑style flat badge, e.g. `EyeWire | 4,579,373 pts`.
+
+### Badge query parameters
+
+| Param    | Values                                                        | Default     |
+|----------|---------------------------------------------------------------|-------------|
+| `u`      | EyeWire username (required)                                   | —           |
+| `metric` | `points` · `cubes` · `trailblazes` · `scythes` · `complete` · `fscore` | `points` |
+| `period` | `day` · `week` · `month` · `forever`                          | `forever`   |
+| `label`  | Left‑side text                                                | `EyeWire`   |
+| `color`  | Right‑side colour, `#rgb` or `#rrggbb`                        | `#2563eb`   |
+
+Examples:
+
+```markdown
+![pts](https://your-worker.example/badge.svg?u=SomeUser)
+![F-score](https://your-worker.example/badge.svg?u=SomeUser&metric=fscore&label=EyeWire%20F-score&color=#16a34a)
+![cubes](https://your-worker.example/badge.svg?u=SomeUser&metric=cubes&period=week)
+```
+
+The badge endpoint always returns a **renderable** SVG (HTTP 200) — even for an
+unknown player (`player not found`) or an outage (`unavailable`) — so a README
+never shows a broken‑image icon. Successful badges cache for 120s; error badges
+use a short 30s TTL so they self‑heal. This endpoint needs the Worker (an image
+URL can't run client‑side fetch), so it isn't available in the no‑proxy setup.
+
+---
+
 ## Security
 
 This widget is intentionally minimal and safe to embed:
@@ -211,9 +254,10 @@ This widget is intentionally minimal and safe to embed:
 │  └─ api-response-example.json
 ├─ examples/                # basic / card / mini standalone pages
 ├─ worker/                  # optional Cloudflare Worker proxy
-│  ├─ index.js
+│  ├─ index.js              #   /stats proxy + /badge.svg endpoint
+│  ├─ badge.js              #   pure SVG badge generator
 │  └─ wrangler.toml
-├─ test/logic.test.mjs      # unit tests for the pure logic
+├─ test/                    # unit tests (logic, element, badge)
 ├─ build.mjs                # zero-dependency bundler (src → dist + docs)
 └─ package.json
 ```
@@ -230,11 +274,10 @@ standard library (Node ≥ 18).
 
 ---
 
-## Roadmap (out of scope for the MVP)
+## Roadmap
 
-- An SVG badge endpoint (`/badge.svg?u=USER`) for GitHub READMEs, since GitHub
-  strips arbitrary `<script>` from Markdown — a `<script>` widget can't run
-  there, so a static image is the right tool.
+- ✅ ~~SVG badge endpoint (`/badge.svg?u=USER`) for GitHub READMEs~~ — shipped,
+  see [SVG badge](#svg-badge-for-github-readmes) above.
 - Additional themes / accent presets.
 
 Explicitly **not** planned: EyeWire auth, private data, acting on behalf of a
