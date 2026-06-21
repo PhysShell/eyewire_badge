@@ -59,14 +59,15 @@ function svg(body, { status = 200, cache = CACHE_SECONDS } = {}) {
   });
 }
 
-/** Typed failure so callers can pick the right rendering per error kind. */
-class UpstreamError extends Error {
-  constructor(kind) { super(kind); this.kind = kind; } // "not_found" | "unavailable"
-}
+/** Thrown when the upstream itself is unreachable / errored (not "no such player"). */
+class UpstreamError extends Error {}
 
 /**
- * Fetch + parse a player's raw stats. Throws UpstreamError("not_found") when the
- * player does not exist (the API signals this with id:null and an HTTP 200).
+ * Fetch + parse a player's raw stats and return the payload unchanged.
+ * Note: an unknown player is NOT an error here — EyeWire signals it with
+ * `id: null` and an HTTP 200, which we pass straight through so `/stats` stays a
+ * transparent proxy. Callers that care (e.g. the badge) inspect `data.id`.
+ * Throws UpstreamError only when the upstream is unreachable or malformed.
  */
 async function fetchPlayer(user) {
   const ctrl = new AbortController();
@@ -89,9 +90,8 @@ async function fetchPlayer(user) {
   try {
     data = await res.json();
   } catch (_err) {
-    throw new UpstreamError("unavailable");
+    throw new UpstreamError("malformed upstream response");
   }
-  if (!data || data.id == null) throw new UpstreamError("not_found");
   return data;
 }
 
@@ -112,13 +112,14 @@ async function handleStats(url, ctx) {
   const cached = await cache.match(cacheKey);
   if (cached) return cached;
 
+  // Transparent passthrough: forward EyeWire's payload verbatim, INCLUDING the
+  // unknown-player case (id:null, HTTP 200). The widget's normalizeStats() reads
+  // id:null as "not found", and plain proxy consumers get the same shape they'd
+  // get from EyeWire directly. Only a real upstream failure becomes a 502.
   let data;
   try {
     data = await fetchPlayer(user);
-  } catch (err) {
-    if (err instanceof UpstreamError && err.kind === "not_found") {
-      return json({ error: "not_found" }, 404);
-    }
+  } catch (_err) {
     return json({ error: "upstream_unavailable" }, 502);
   }
 
@@ -161,11 +162,17 @@ async function handleBadge(url, ctx) {
   let cacheSeconds = CACHE_SECONDS;
   try {
     const data = await fetchPlayer(user);
-    message = metricMessage(data, period, metric);
-  } catch (err) {
-    const notFound = err instanceof UpstreamError && err.kind === "not_found";
-    message = notFound ? "player not found" : "unavailable";
-    messageColor = notFound ? COLORS.error : COLORS.muted;
+    if (!data || data.id == null) {
+      // Unknown player (EyeWire returns id:null with HTTP 200).
+      message = "player not found";
+      messageColor = COLORS.error;
+      cacheSeconds = ERROR_CACHE_SECONDS;
+    } else {
+      message = metricMessage(data, period, metric);
+    }
+  } catch (_err) {
+    message = "unavailable";
+    messageColor = COLORS.muted;
     cacheSeconds = ERROR_CACHE_SECONDS;
   }
 
