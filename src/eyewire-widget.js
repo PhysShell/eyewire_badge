@@ -107,6 +107,7 @@ class EyeWireStats extends HTMLElement {
     this._abort = new AbortController();
 
     this._data = null;
+    this.setAttribute("aria-label", `Loading EyeWire stats for ${user}`);
     this._render(renderState({ kind: "loading" }, this.mode));
 
     try {
@@ -129,12 +130,19 @@ class EyeWireStats extends HTMLElement {
   }
 
   _error(kind) {
+    const labels = {
+      invalid: "Invalid EyeWire username",
+      not_found: "EyeWire player not found",
+      unavailable: "EyeWire stats unavailable",
+    };
+    this.setAttribute("aria-label", labels[kind] || labels.unavailable);
     this._render(renderState({ kind: "error", errorKind: kind }, this.mode));
   }
 
   /** Re-render presentation from cached data (no network). */
   _paint() {
     if (!this._data) return;
+    this.setAttribute("aria-label", `EyeWire stats for ${this._data.username}`);
     this._render(renderStats(this.mode, this._data, {
       compact: this.compact,
       showUpdated: this.showUpdated,

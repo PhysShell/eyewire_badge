@@ -72,7 +72,7 @@ re‑render.
 
 | Mode    | Looks like |
 |---------|------------|
-| `card`  | Full HUD card: username, Score, Cubes, Trailblazes, (Scythes), F‑score bar, "updated" footer. |
+| `card`  | Full HUD card: username, Score, Cubes, Trailblazes, (Scythes), (Completed), F‑score bar, "updated" footer. |
 | `mini`  | Inline pill: `User · 4,579,373 pts · F 98.9%` |
 | `badge` | Tiny two‑tone pill: `EyeWire ▏ 4,579,373 pts` |
 

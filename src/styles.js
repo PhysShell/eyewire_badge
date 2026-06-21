@@ -78,6 +78,7 @@ export const styles = `
       linear-gradient(90deg, var(--ew-grid) 1px, transparent 1px);
     background-size: 22px 22px;
     pointer-events: none;
+    -webkit-mask-image: linear-gradient(180deg, rgba(0,0,0,0.9), transparent 75%);
     mask-image: linear-gradient(180deg, rgba(0,0,0,0.9), transparent 75%);
   }
   .card::after {

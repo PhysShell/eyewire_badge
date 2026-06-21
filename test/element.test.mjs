@@ -23,7 +23,7 @@ class Element extends Node {
   }
   getAttribute(n) { return this._attrs[n] ?? null; }
   hasAttribute(n) { return n in this._attrs; }
-  dispatchEvent() { return true; }
+  dispatchEvent(e) { (this._events ||= []).push(e); return true; }
   get shadowView() { return this._shadow.children.find((c) => c.className === "ew-view"); }
 }
 globalThis.HTMLElement = Element;
@@ -82,6 +82,25 @@ test("invalid username never fetches", async () => {
   await tick();
   assert.equal(called, false);
   assert.match(el.shadowView.innerHTML, /Invalid username/);
+});
+
+test("dispatches eyewire:load with normalised detail on success", async () => {
+  fetchImpl = async () => ({ ok: true, status: 200, json: async () => sample });
+  const el = mount({ user: "crazyman4865" });
+  await tick();
+  const ev = (el._events || []).find((e) => e.type === "eyewire:load");
+  assert.ok(ev, "eyewire:load should be dispatched");
+  assert.equal(ev.detail.username, "crazyman4865");
+  assert.equal(ev.detail.points, 4579373);
+});
+
+test("dispatches eyewire:error with kind on failure", async () => {
+  fetchImpl = async () => ({ ok: true, status: 200, json: async () => ({ id: null, username: "ghost", forever: {} }) });
+  const el = mount({ user: "ghost" });
+  await tick();
+  const ev = (el._events || []).find((e) => e.type === "eyewire:error");
+  assert.ok(ev, "eyewire:error should be dispatched");
+  assert.equal(ev.detail.kind, "not_found");
 });
 
 test("changing user attribute refetches", async () => {

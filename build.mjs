@@ -25,6 +25,9 @@ function stripModuleSyntax(code) {
     .filter((line) => {
       const t = line.trim();
       // Drop local import statements and bare re-export lines.
+      // NOTE: this assumes single-line imports (which the src/ modules use). A
+      // multi-line `import {\n  a,\n} from "./x.js"` would NOT be stripped and
+      // would break the bundle — keep imports on one line, or upgrade this.
       if (/^import\s.+from\s+['"]\.\/.+['"];?$/.test(t)) return false;
       if (/^export\s*\{[^}]*\};?$/.test(t)) return false;
       return true;

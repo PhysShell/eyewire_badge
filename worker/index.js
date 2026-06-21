@@ -5,7 +5,8 @@
  * so the widget works WITHOUT this proxy. Deploy it only when you want:
  *   - edge caching (don't hammer EyeWire on every page view),
  *   - a stable URL you control if EyeWire changes headers,
- *   - basic rate limiting / username validation at the edge.
+ *   - username validation at the edge (and an obvious place to add rate
+ *     limiting or an origin allow-list if you ever need them).
  *
  * Endpoint:
  *   GET /stats?u=<username>   ->  the player's stats JSON (passed through)
@@ -65,9 +66,13 @@ export default {
       return json({ error: "invalid_username" }, 400);
     }
 
-    // Serve from the edge cache when we can.
+    // Serve from the edge cache when we can. Build a minimal canonical key so
+    // unusual client headers can't fragment the cache for the same username.
     const cache = caches.default;
-    const cacheKey = new Request(`${url.origin}/stats?u=${encodeURIComponent(user)}`, request);
+    const cacheKey = new Request(
+      `${url.origin}/stats?u=${encodeURIComponent(user)}`,
+      { method: "GET", headers: { Accept: "application/json" } }
+    );
     const cached = await cache.match(cacheKey);
     if (cached) return cached;
 
@@ -83,10 +88,10 @@ export default {
         signal: ctrl.signal,
       });
     } catch (_err) {
-      clearTimeout(timer);
       return json({ error: "upstream_unavailable" }, 502);
+    } finally {
+      clearTimeout(timer);
     }
-    clearTimeout(timer);
 
     if (!upstream.ok) {
       return json({ error: "upstream_error", status: upstream.status }, 502);

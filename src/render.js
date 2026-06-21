@@ -12,7 +12,11 @@ export function formatNumber(n) {
   return NF.format(Math.round(Number(n) || 0));
 }
 
-/** Compact human label for an absolute timestamp ("2 min ago"). */
+/**
+ * Compact human label for an absolute timestamp ("2 min ago").
+ * `ts` is expected to be in the past (we use it for `fetchedAt`); a future
+ * timestamp simply clamps to "just now" via the Math.max below.
+ */
 export function relativeTime(ts, now = Date.now()) {
   const s = Math.max(0, Math.round((now - ts) / 1000));
   if (s < 5) return "just now";
@@ -75,6 +79,7 @@ export function renderCard(d, opts = {}) {
     metricRow("Trailblazes", formatNumber(d.trailblazes)),
   ];
   if (d.scythes > 0) rows.push(metricRow("Scythes", formatNumber(d.scythes)));
+  if (d.complete > 0) rows.push(metricRow("Completed", formatNumber(d.complete)));
 
   const fscoreBlock = p == null ? "" : `
     <div class="fscore">

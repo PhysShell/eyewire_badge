@@ -87,6 +87,7 @@
         linear-gradient(90deg, var(--ew-grid) 1px, transparent 1px);
       background-size: 22px 22px;
       pointer-events: none;
+      -webkit-mask-image: linear-gradient(180deg, rgba(0,0,0,0.9), transparent 75%);
       mask-image: linear-gradient(180deg, rgba(0,0,0,0.9), transparent 75%);
     }
     .card::after {
@@ -454,7 +455,11 @@
     return NF.format(Math.round(Number(n) || 0));
   }
   
-  /** Compact human label for an absolute timestamp ("2 min ago"). */
+  /**
+   * Compact human label for an absolute timestamp ("2 min ago").
+   * `ts` is expected to be in the past (we use it for `fetchedAt`); a future
+   * timestamp simply clamps to "just now" via the Math.max below.
+   */
   function relativeTime(ts, now = Date.now()) {
     const s = Math.max(0, Math.round((now - ts) / 1000));
     if (s < 5) return "just now";
@@ -517,6 +522,7 @@
       metricRow("Trailblazes", formatNumber(d.trailblazes)),
     ];
     if (d.scythes > 0) rows.push(metricRow("Scythes", formatNumber(d.scythes)));
+    if (d.complete > 0) rows.push(metricRow("Completed", formatNumber(d.complete)));
   
     const fscoreBlock = p == null ? "" : `
       <div class="fscore">
@@ -671,6 +677,7 @@
       this._abort = new AbortController();
   
       this._data = null;
+      this.setAttribute("aria-label", `Loading EyeWire stats for ${user}`);
       this._render(renderState({ kind: "loading" }, this.mode));
   
       try {
@@ -693,12 +700,19 @@
     }
   
     _error(kind) {
+      const labels = {
+        invalid: "Invalid EyeWire username",
+        not_found: "EyeWire player not found",
+        unavailable: "EyeWire stats unavailable",
+      };
+      this.setAttribute("aria-label", labels[kind] || labels.unavailable);
       this._render(renderState({ kind: "error", errorKind: kind }, this.mode));
     }
   
     /** Re-render presentation from cached data (no network). */
     _paint() {
       if (!this._data) return;
+      this.setAttribute("aria-label", `EyeWire stats for ${this._data.username}`);
       this._render(renderStats(this.mode, this._data, {
         compact: this.compact,
         showUpdated: this.showUpdated,
