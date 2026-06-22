@@ -124,7 +124,9 @@ This repo's demo lives in [`docs/`](docs/) and the build copies the widget into
 `docs/eyewire-widget.js`, so Pages can serve everything from one folder.
 
 1. **Settings → Pages → Build and deployment → Source:** *Deploy from a branch*.
-2. **Branch:** your default branch, **folder:** `/docs`.
+2. **Branch:** your default branch, **folder:** `/docs` (recommended). The repo
+   also ships a root `index.html` that redirects to `docs/`, so publishing from
+   `/ (root)` works too — handy if you leave the folder on its default.
 3. Save. After a minute your site is at `https://USERNAME.github.io/REPO/`.
 4. Embed from anywhere using:
    ```html
