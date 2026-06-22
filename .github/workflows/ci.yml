@@ -25,7 +25,11 @@ jobs:
 
       - name: Ensure committed bundle is in sync with src/
         run: |
-          if ! git diff --exit-code dist/ docs/eyewire-widget.js eyewire-widget.js; then
-            echo "::error::Committed bundles are stale. Run 'npm run build' and commit the result."
+          # git diff catches modified *tracked* bundles; git status --porcelain
+          # also catches an untracked bundle (e.g. one removed from git that the
+          # build regenerates), which diff alone would miss.
+          if ! git diff --exit-code -- dist/ docs/eyewire-widget.js eyewire-widget.js \
+            || [ -n "$(git status --porcelain -- dist/ docs/eyewire-widget.js eyewire-widget.js)" ]; then
+            echo "::error::Committed bundles are stale or untracked. Run 'npm run build' and commit the result."
             exit 1
           fi

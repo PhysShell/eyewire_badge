@@ -1,0 +1,12 @@
+# CodeRabbit configuration — https://docs.coderabbit.ai/guides/configure-coderabbit
+#
+# The widget bundle is generated from src/ by `node build.mjs` and committed to
+# three locations (repo root, dist/, docs/) purely for distribution. CI's
+# bundle-sync gate guarantees they match src/, so these are build artifacts, not
+# authored source — exclude them from review (otherwise things like docstring
+# coverage are measured against concatenated/processed output, not real code).
+reviews:
+  path_filters:
+    - "!eyewire-widget.js"
+    - "!dist/**"
+    - "!docs/eyewire-widget.js"
