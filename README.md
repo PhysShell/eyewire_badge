@@ -125,8 +125,9 @@ This repo's demo lives in [`docs/`](docs/) and the build copies the widget into
 
 1. **Settings → Pages → Build and deployment → Source:** *Deploy from a branch*.
 2. **Branch:** your default branch, **folder:** `/docs` (recommended). The repo
-   also ships a root `index.html` that redirects to `docs/`, so publishing from
-   `/ (root)` works too — handy if you leave the folder on its default.
+   also ships a root `index.html` (redirects to `docs/`) and a root copy of
+   `eyewire-widget.js`, so publishing from `/ (root)` works too — both the demo
+   and the embed URL below resolve in either mode.
 3. Save. After a minute your site is at `https://USERNAME.github.io/REPO/`.
 4. Embed from anywhere using:
    ```html
@@ -248,6 +249,8 @@ This widget is intentionally minimal and safe to embed:
 │  ├─ api.js                #   fetch + validation + normalization
 │  ├─ render.js             #   card / mini / badge / state renderers
 │  └─ styles.js             #   Shadow DOM styles (themeable)
+├─ eyewire-widget.js        # built bundle, repo-root copy (generated; Pages from /root)
+├─ index.html               # root redirect to docs/ demo (Pages from /root)
 ├─ dist/eyewire-widget.js   # built single-file bundle (generated)
 ├─ docs/                    # GitHub Pages demo (self-contained)
 │  ├─ index.html
@@ -267,7 +270,7 @@ This widget is intentionally minimal and safe to embed:
 ## Develop
 
 ```bash
-npm run build   # bundle src/ -> dist/ and docs/
+npm run build   # bundle src/ -> dist/, docs/, and repo-root eyewire-widget.js
 npm test        # run unit tests (node --test)
 ```
 

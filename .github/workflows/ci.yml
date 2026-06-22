@@ -25,7 +25,7 @@ jobs:
 
       - name: Ensure committed bundle is in sync with src/
         run: |
-          if ! git diff --exit-code dist/ docs/eyewire-widget.js; then
-            echo "::error::dist/ and docs/eyewire-widget.js are stale. Run 'npm run build' and commit the result."
+          if ! git diff --exit-code dist/ docs/eyewire-widget.js eyewire-widget.js; then
+            echo "::error::Committed bundles are stale. Run 'npm run build' and commit the result."
             exit 1
           fi

@@ -59,7 +59,11 @@ ${parts.join("\n\n").replace(/^/gm, "  ")}
 
 // Emit the canonical bundle to dist/ and a copy into docs/ so GitHub Pages
 // (served from /docs) is fully self-contained with no path juggling.
-const targets = ["dist/eyewire-widget.js", "docs/eyewire-widget.js"];
+// Emit the bundle to dist/ (canonical), docs/ (GitHub Pages from /docs) and the
+// repo root (GitHub Pages from / (root)). Shipping a root copy means the single
+// documented embed URL — https://USER.github.io/REPO/eyewire-widget.js — works
+// regardless of which folder Pages is published from.
+const targets = ["dist/eyewire-widget.js", "docs/eyewire-widget.js", "eyewire-widget.js"];
 for (const rel of targets) {
   await mkdir(join(root, dirname(rel)), { recursive: true });
   await writeFile(join(root, rel), bundle, "utf8");
